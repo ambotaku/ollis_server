@@ -1,0 +1,12 @@
+doctype=html
+html
+    head
+        title #{title}
+    body
+        h1 #{title}
+        h2 Region: #{region}
+        table(style='width:40%', border='2')
+          for date in data
+            tr
+              td #{date[0]}
+              td #{date[1].datum}
