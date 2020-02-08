@@ -18,6 +18,9 @@
   "homepage": "https://github.com/ambotaku/ollis_server#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "pug": "^2.0.4"
+    "pug": "^2.0.4",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.8",
+    "s": "^1.0.0"
   }
 }

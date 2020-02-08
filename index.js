@@ -1,25 +1,45 @@
 
+// load modules
 const express = require('express');
-const app = express();
+const request = require('request-promise-native');
 
-const request = require('request')
+// webservice request parameters
 const requestUrl = 'https://feiertage-api.de/api/?jahr=2020';
-const timeoutInMilliseconds = 10*1000;
 
-
+// app parameters
 const port = 3000;
 const host = 'localhost';
 const title = "Olli's Feiertags - Server mit Mops (Pug)";
 
-const opts = {
-  url: requestUrl,
-  timeout: timeoutInMilliseconds
-};
+const app = express(); // create express instance
+app.set('views', './views'); // define templates path
+app.set('view engine', 'pug'); // set template engine
 
-app.set('views', './views');
-app.set('view engine', 'pug');
+// safer/cleaner request implementation needing promises
+app.get('/:region?', (req, response) => {
+  let region = req.params.region;
+  if (!region) {
+    region = 'NATIONAL';
+  }
 
-app.get('/:region?', (req, res) => {
+  // get data from webservice
+  request(requestUrl)
+    .then(jsonString => { // got data
+      var data = JSON.parse(jsonString)[region]; // string to data object
+      if (data) {
+        response.render('index', {title: title, region: region, data: Object.entries(data) });
+      } else {
+        response.render('error', {title: title, error: 'unbekanntes Bundesland abgefragt.'});
+      }
+    })
+    .catch(err => { // got error
+      response.render('error', {title: title, error: err});
+    });
+});
+
+// OBSOLETE: callbacks may lead to a 'callback hell'
+/*
+app.get('/:region', (req, res) => {
   let response = res;
   let region = req.params.region;
   if (!region) region = 'NATIONAL';
@@ -34,6 +54,7 @@ app.get('/:region?', (req, res) => {
     }
  });
 });
+*/
 
 app.listen(port, host, () => {
   console.log(`Server started at ${host} port ${port}`);
