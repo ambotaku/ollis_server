@@ -24,17 +24,21 @@ async function consumeService(url, region) {
   return JSON.parse(body)[region];
 }
 
-app.get('/:region?', (req, response) => {
+app.get('/:region?', async (req, response) => {
   let region = req.params.region;
   if (!region) {
     region = 'NATIONAL';
   }
 
-  const data = consumeService(requestUrl, region);
-  if (data) {
-    response.render('index', {title: title, region: region, data: Object.entries(data) });
-  } else {
-    response.render('error', {title: title, error: 'unbekanntes Bundesland abgefragt.'});
+  try {
+    const data = await consumeService(requestUrl, region);
+    if (data) {
+      response.render('index', {title: title, region: region, data: Object.entries(data) });
+    } else {
+      response.render('error', {title: title, error: 'unbekanntes Bundesland abgefragt.'});
+    }
+  } catch (e) {
+      response.render('error', {title: title, error: 'Servicefehler: ' + e});
   }
 });
 
