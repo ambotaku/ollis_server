@@ -1,4 +1,9 @@
 
+/*
+  Sample Express app consuming a webservice
+  async handling done with promises
+ */
+
 // load modules
 const express = require('express');
 const request = require('request-promise-native');
